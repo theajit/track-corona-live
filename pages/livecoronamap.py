@@ -4,7 +4,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import plotly.graph_objs as go
+import plotly.graph_objects as go
 import country_converter as coco
 import numpy as np
 
@@ -16,29 +16,21 @@ url = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0P
 df_list = pd.read_html(url)[0]
 
 df = pd.DataFrame(df_list)
-df.set_index('Unnamed: 0', inplace=True)
 
-
-df_final = df.drop(columns=["Unnamed: 7","Unnamed: 8"])
-
-df_total = df_final.loc[3:4, :]
-
+df_final = df.drop(columns=["Unnamed: 0","Unnamed: 3","Unnamed: 5","Unnamed: 6","Unnamed: 9","Unnamed: 10","Unnamed: 11", "Unnamed: 12", "Unnamed: 13","Unnamed: 14", "Unnamed: 15", "Unnamed: 16"])
+df_final.columns = ['Country', 'Confirmed','Deaths','Serious & Critical','Recovered']
+#df_total = df_final.loc[3:4, :]
+df_country = df_final.set_index("Country", inplace = False) 
 df_country = df_final.loc[7:, :]
-df_country.columns = ['Country', 'Confirmed', 'Deaths','Serious','Critical','Recovered']
 
-df_country[df_country.Country != 'Diamond Princess']
-df_country.Country.replace(to_replace ="Diamond Princess", 
-                 value ="Japan") 
-
-df_country = df_country[:-2]
 
 df_country['iso_alpha'] = df_country['Country'].apply(lambda x: coco.convert(names=x, src='regex', to='ISO3', not_found = None))
 
-
+df_country = df_country[:-2]
 
 df_country.replace(to_replace = np.nan, value =0) 
 
-
+#print (df_country)
 
 layout = html.Div([html.Div([html.H2("Live Corona Map")],
                                 style={'textAlign': "center", "padding-bottom": "30"}),
@@ -47,36 +39,34 @@ layout = html.Div([html.Div([html.H2("Live Corona Map")],
                                  dcc.Dropdown(id="value-selected", value='Confirmed',
                                               options=[{'label': "Confirmed Cases ", 'value': 'Confirmed'},
                                                        {'label': "Deaths ", 'value': 'Deaths'},
-                                                       {'label': "Serious ", 'value': 'Serious'},
-                                                       {'label': "Critical ", 'value': 'Critical'},
+                                                       {'label': "Serious & Critical ", 'value': 'Serious & Critical'},
                                                        {'label': "Recovered ", 'value': 'Recovered'}],
                                               style={"display": "block", "margin-left": "auto", "margin-right": "auto",
                                                      "width": "70%"},
                                               className="six columns")], className="row"),
-                       dcc.Graph(id="my-graph")
+                       dcc.Graph(id="my-graph",config= {'responsive': True})
                        ], className="container")
+
 color1 = 'rgb(91, 192, 235)'
 color2 = 'rgb(253, 231, 76)'
 color3 = 'rgb(155, 197, 61)'
 color4 = 'rgb(229, 89, 52)'
 color5 = 'rgb(250, 121, 33)'
 
-colormap = [[0.0, color1], [0.25, color2], [0.50, color3],
-        [0.75, color4], [1.0, color5]]
-        
-@app.callback(
-    dash.dependencies.Output("my-graph", "figure"),
+colormap = [[0.0, color1], [0.25, color2], [0.50, color3],[0.75, color4], [1.0, color5]]
+
+@app.callback(dash.dependencies.Output("my-graph", "figure"),
     [dash.dependencies.Input("value-selected", "value")]
 )
 
 def update_figure(selected):
-    dff = df_country.groupby(['iso_alpha','Country','Confirmed', 'Deaths','Serious','Critical','Recovered']).max().reset_index()
+    dff = df_country.groupby(['iso_alpha','Country','Confirmed', 'Deaths','Serious & Critical','Recovered']).max().reset_index()
     def title(text):
         if text == "Confirmed":
             return "Confirmed Cases"
         elif text == "Deaths":
             return "Deaths Cases"
-        elif text == "Critical" or "Serious":
+        elif text == "Critical & Serious":
             return "Critical/Serious Cases"
         else:
             return "Recovered"

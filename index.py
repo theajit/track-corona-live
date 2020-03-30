@@ -3,28 +3,46 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_table
 import base64
+import dash
 
+from pages import home, livecoronamap, livecoronatable
+
+external_stylesheets = ['https://codepen.io/theajit/pen/vYYxVLb.css']
+
+#external JavaScript files
+external_scripts = [
+    'https://codepen.io/theajit/pen/JjdLvZE.js',
+]
 from app import app
-from pages import home,livecoronamap, livecoronatable
-
-
+#app = dash.Dash(__name__, external_stylesheets=external_stylesheets,external_scripts=external_scripts)
+#server = app.server
+#app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
+    html.Title('Live Corona Track Online'),
     html.Br(),
     html.Div([
 
         html.Div([
              dcc.Link('Home ', href='/')
-        ], className="four columns tab first page-view no-print"),
+        ], className="two columns tab first page-view no-print"),
 
         html.Div([
-             dcc.Link('Live Table View ', href='/live-corona-world-table')
-        ], className="four columns tab page-view no-print"),
+             dcc.Link('Live Table ', href='/live-corona-world-table')
+        ], className="two columns tab page-view no-print"),
 
         html.Div([
-             dcc.Link('Live Map View ', href='/live-corona-world-map')
-        ], className="four columns tab page-view no-print")
+             html.A(' Map Coming Soon ', href='#')
+        ], className="two columns tab page-view no-print"),
+
+	html.Div([
+             html.A('Twitter ', href='https://twitter.com/cocktails_guy',target = "_blank")
+        ], className="two columns tab page-view no-print"),
+
+	html.Div([
+             html.A('LinkedIn ', href='https://www.linkedin.com/in/ajitsatpathy/',target = "_blank")
+        ], className="two columns tab page-view no-print")
 
 
     ], style={'textAlign': 'center'}, className="row gs-header"),
@@ -33,6 +51,7 @@ app.layout = html.Div([
 
     html.Div(id='page-content')
 ])
+
 
 
 @app.callback(Output('page-content', 'children'),
@@ -45,7 +64,8 @@ def display_page(pathname):
     elif pathname == '/live-corona-world-table':
         return livecoronatable.layout
     else:
-        return '404'
+        return home.layout
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
