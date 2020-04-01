@@ -46,14 +46,14 @@ layout = html.Div(
                 "textAlign": "left",
             },
             style_data_conditional=[
-                {"if": {"column_id": "Confirmed"}, "color": "rgb(101, 221, 155)",},
-                {"if": {"column_id": "Deaths"}, "color": "#F65164",},
+                {"if": {"column_id": "Confirmed"}, "color": "rgb(101, 221, 155)", },
+                {"if": {"column_id": "Deaths"}, "color": "#F65164", },
                 {
                     "if": {"column_id": "Confirmed(Foreign)"},
                     "color": "rgb(248, 245, 64)",
                 },
-                {"if": {"column_id": "Critical"}, "color": "rgb(248, 245, 64)",},
-                {"if": {"column_id": "Recovered"}, "color": "rgb(68, 155, 226)",},
+                {"if": {"column_id": "Critical"}, "color": "rgb(248, 245, 64)", },
+                {"if": {"column_id": "Recovered"}, "color": "rgb(68, 155, 226)", },
             ],
         ),
     ]
