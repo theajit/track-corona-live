@@ -1,1 +1,1 @@
-__all_ = ['home','livecoronamap','livecoronatable']
+__all_ = ["home", "livecoronamap", "livecoronatable"]
