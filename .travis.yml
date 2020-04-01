@@ -1,4 +1,5 @@
 language: python
+os: ubuntu
 dist: bionic
 install:
 - pip install -r requirements.txt
