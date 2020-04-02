@@ -43,7 +43,7 @@ df_country["iso_alpha"] = df_country["Country"].apply(
 
 df_country = df_country[:-2]
 
-df_country.replace(to_replace=np.nan, value=0)
+df_country = df_country.replace(to_replace=np.nan, value=0)
 
 # print (df_country)
 
@@ -80,22 +80,22 @@ layout = html.Div(
             ],
             className="row",
         ),
-        dcc.Graph(id="my-graph", config={"responsive": True}),
+        dcc.Graph(id="my-graph", config={"responsive": True, 'displayModeBar': False}),
     ],
     className="container",
 )
 
-color1 = "rgb(91, 192, 235)"
-color2 = "rgb(253, 231, 76)"
-color3 = "rgb(155, 197, 61)"
-color4 = "rgb(229, 89, 52)"
-color5 = "rgb(250, 121, 33)"
+color1 = "#d2e3fc"
+color2 = "#8ab4f8"
+color3 = "#4285f4"
+color4 = "#1967d2"
+color5 = "#174ea6"
 
 colormap = [
     [0.0, color1],
-    [0.25, color2],
-    [0.50, color3],
-    [0.75, color4],
+    [0.10, color2],
+    [0.30, color3],
+    [0.55, color4],
     [1.0, color5],
 ]
 
@@ -159,7 +159,7 @@ def update_figure(selected):
                 "showland": True,
                 "landcolor": "White",
                 "showocean": True,
-                "oceancolor": "LightBlue",
+                "oceancolor": "#72e7f3",
                 "showcountries": True,
                 "countrycolor": "RebeccaPurple",
                 "projection": {"type": "miller"},

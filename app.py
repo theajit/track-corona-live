@@ -1,15 +1,4 @@
-import datetime as dt
-import json
-import uuid
-
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-import dash_table
-import flask
-from apscheduler.schedulers.background import BackgroundScheduler
-from dash.dependencies import Input, Output
-
+from refresh import update
 from pages import (
     countrycasesgrowth,
     countryratechanges,
@@ -23,21 +12,17 @@ from pages import (
     liveusamap,
     liveusatable,
 )
-from refresh import update
+import datetime as dt
+import json
+import uuid
 
-external_stylesheets = ["https://codepen.io/theajit/pen/vYYxVLb.css"]
-
-# external JavaScript files
-external_scripts = [
-    "https://codepen.io/theajit/pen/JjdLvZE.js",
-]
-
-# app = flask.Flask(__name__)
-
-# dash_app = dash.Dash(__name__, external_stylesheets=external_stylesheets,external_scripts=external_scripts)
-
-# server = app.server
-# dash_app.config.suppress_callback_exceptions = True
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import dash_table
+import flask
+from apscheduler.schedulers.background import BackgroundScheduler
+from dash.dependencies import Input, Output
 
 server = flask.Flask(__name__)
 app = dash.Dash(__name__, server=server, routes_pathname_prefix="/data/")
@@ -45,6 +30,14 @@ app = dash.Dash(__name__, server=server, routes_pathname_prefix="/data/")
 app.config.suppress_callback_exceptions = True
 
 app.server.secret_key = str(uuid.uuid4())
+
+
+external_stylesheets = ["https://codepen.io/theajit/pen/vYYxVLb.css"]
+
+# external JavaScript files
+external_scripts = [
+    "https://codepen.io/theajit/pen/JjdLvZE.js",
+]
 
 app.title = "Track Corona Online Live | India | USA | China"
 

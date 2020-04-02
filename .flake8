@@ -3,4 +3,4 @@ max-line-length = 160
 exclude = tests/*
 max-complexity = 50
 select = C,E,F,W,B,B950
-ignore = E203, E501, W503
+ignore = E203, E501, W503, E402
