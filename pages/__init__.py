@@ -6,4 +6,3 @@ __all_ = ["home", "livecoronamap", "livecoronatable", "countrycasesgrowth",
           "liveindiamap",
           "liveusamap",
           "liveusatable"]
-
