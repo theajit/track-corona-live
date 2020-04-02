@@ -1,17 +1,3 @@
-from refresh import update
-from pages import (
-    countrycasesgrowth,
-    countryratechanges,
-    credits,
-    home,
-    indiahelpline,
-    indiatable,
-    livecoronamap,
-    livecoronatable,
-    liveindiamap,
-    liveusamap,
-    liveusatable,
-)
 import datetime as dt
 import json
 import uuid
@@ -30,6 +16,11 @@ app = dash.Dash(__name__, server=server, routes_pathname_prefix="/data/")
 app.config.suppress_callback_exceptions = True
 
 app.server.secret_key = str(uuid.uuid4())
+
+from pages import (countrycasesgrowth, countryratechanges, credits, home,
+                   indiahelpline, indiatable, livecoronamap, livecoronatable,
+                   liveindiamap, liveusamap, liveusatable)
+from refresh import update
 
 
 external_stylesheets = ["https://codepen.io/theajit/pen/vYYxVLb.css"]
