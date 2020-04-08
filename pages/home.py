@@ -1,61 +1,46 @@
 from app import app
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 import plotly.graph_objs as go
 import json
 from urllib.request import urlopen
 import dash_daq as daq
 from dash.dependencies import Input, Output
-
+from apscheduler.schedulers.background import BackgroundScheduler
+from .functions import indiadata, worlddata
 
 token = open("/var/www/coronaApp/liveapp/pages/.mapbox_token").read()
 
-
-url = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
-
-df_list = pd.read_html(url)[0]
-
-df = pd.DataFrame(df_list)
-# print (df)
-
-# df_final = df.drop(columns=["Unnamed: 0","Unnamed: 7","Unnamed: 8"])
-# df_final = df.drop(columns=["Unnamed: 0","Unnamed: 7"])
-df_final = df.drop(
-    columns=[
-        "Unnamed: 0",
-        "Unnamed: 3",
-        "Unnamed: 5",
-        "Unnamed: 6",
-        "Unnamed: 9",
-        "Unnamed: 10",
-        "Unnamed: 11",
-        "Unnamed: 12",
-        "Unnamed: 13",
-        "Unnamed: 14",
-        "Unnamed: 15",
-        "Unnamed: 16",
-    ]
-)
-df_final.columns = ["Country", "Confirmed", "Deaths", "Serious & Critical", "Recovered"]
-# df_final.columns = ['Country', 'Confirmed', 'Deaths','Serious','Critical','Recovered']
-
-df_country = df_final.set_index("Country", inplace=False)
-df_country = df_country.iloc[7:]
+# World Data
+url_world = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
+world_start = 7
+world_strip = 2
+world_endrow = 2
 
 
-df_total = df_country.iloc[[-2]]
-# df_total = df_total.replace(np.nan, value =0)
-df_total = df_total.replace("-", 0, regex=True)
-df_total = df_total.fillna(0)
+def world_map_sensor():
+    print("World Home Page Map Data Updated!")
+    return worlddata.return_world_map_df(url_world, world_start, world_strip)
 
 
-df_total["Confirmed"] = df_total["Confirmed"].astype(int)
-df_total["Deaths"] = df_total["Deaths"].astype(int)
-df_total["Serious & Critical"] = df_total["Serious & Critical"].astype(int)
-df_total["Recovered"] = df_total["Recovered"].astype(int)
+def world_total_sensor():
+    print("World Home Page Total Number Updated!")
+    return worlddata.return_world_total_df(url_world, world_endrow)
 
-df_country = df_country[:-2]
+
+world_sched = BackgroundScheduler(daemon=True)
+world_sched.add_job(world_map_sensor, "interval", minutes=305)
+world_sched.add_job(world_total_sensor, "interval", minutes=306)
+world_sched.start()
+
+df_country = world_map_sensor()
+
+df_total = world_total_sensor()
+
+df_total["Confirmed"] = df_total["Confirmed"].astype(float)
+df_total["Deaths"] = df_total["Deaths"].astype(float)
+df_total["Serious & Critical"] = df_total["Serious & Critical"].astype(float)
+df_total["Recovered"] = df_total["Recovered"].astype(float)
 
 confirmed = df_total["Confirmed"].values[0]
 deaths = df_total["Deaths"].values[0]
@@ -65,7 +50,6 @@ recovered = df_total["Recovered"].values[0]
 pie_labels = ["Confirmed", "Deaths", "Serious & Critical", "Recovered"]
 pie_values = [confirmed, deaths, serious, recovered]
 
-# total = df_total['Confirmed']+df_total['Deaths']+df_total['Serious']+df_total['Critical']+df_total['Recovered']
 
 fig = go.Figure(
     data=[go.Pie(labels=pie_labels, values=pie_values, pull=[0.3, 0, 0, 0])]
@@ -95,7 +79,7 @@ world_colormap = [
 ]
 
 world_trace = go.Choropleth(
-    locations=df_country.index,
+    locations=df_country.Country,
     locationmode='country names',
     z=df_country["Confirmed"],
     text=df_country.index,
@@ -126,33 +110,41 @@ world_layout = go.Layout(
         "oceancolor": "#72e7f3",
         "showcountries": True,
         "countrycolor": "RebeccaPurple",
-        "projection": {"type": "orthographic"},
+        "projection": {"type": "miller"},
     },
 )
 world_fig = go.Figure(data=[world_trace], layout=world_layout)
 
-# India Confirmed Map on Home Page
+
+# India Confirmed Map and Total on Home Page
+india_url = "https://mohfw.gov.in"
+india_pos = 0
+india_strip = 2
+india_endrow = 2
 
 
-def return_df(url, pos):
-    # Create a handle, page, to handle the contents of the website
-    df_list = pd.read_html(url)[pos]
-    dfs = pd.DataFrame(df_list, dtype=str)
-    return dfs
+def india_map_sensor():
+    print("India Home Page Map Data Updated!")
+    return indiadata.return_india_map_df(india_url, india_pos, india_strip)
 
 
-url = "https://www.mohfw.gov.in/"
-df_india = return_df(url, 0)
+def india_total_sensor():
+    print("India Home Page Total Number Updated!")
+    return indiadata.return_india_total_df(
+        india_url,
+        india_pos,
+        india_endrow)
 
-df_india.columns = ["S. No.", "State", "Confirmed", "Recovered", "Deaths"]
 
-df_india_total = df_india.iloc[[-1]]
-df_india = df_india[:-1]
-df_india["Confirmed"] = df_india["Confirmed"].astype(float)
-df_india["Deaths"] = df_india["Deaths"].astype(float)
-df_india["Recovered"] = df_india["Recovered"].astype(float)
+df_india = india_map_sensor()
 
-df_india = df_india.set_index("S. No.", inplace=False)
+india_sched = BackgroundScheduler(daemon=True)
+india_sched.add_job(india_map_sensor, "interval", minutes=295)
+india_sched.add_job(india_total_sensor, "interval", minutes=290)
+india_sched.start()
+
+
+df_india_total = india_total_sensor()
 
 india_confirmed = df_india_total["Confirmed"].values[0]
 india_deaths = df_india_total["Deaths"].values[0]

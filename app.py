@@ -1,7 +1,6 @@
 import datetime as dt
 import json
 import uuid
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -17,11 +16,21 @@ app.config.suppress_callback_exceptions = True
 
 app.server.secret_key = str(uuid.uuid4())
 
-from pages import (countrycasesgrowth, countryratechanges, credits, home,
-                   indiahelpline, indiatable, livecoronamap, livecoronatable,
-                   liveindiamap, liveusamap, liveusatable)
+from pages import (
+    countrycasesgrowth,
+    countryratechanges,
+    credits,
+    home,
+    indiahelpline,
+    indiatable,
+    livecoronamap,
+    livecoronatable,
+    liveindiamap,
+    liveusamap,
+    liveusatable,
+    prediction,
+)
 from refresh import update
-
 
 external_stylesheets = ["https://codepen.io/theajit/pen/vYYxVLb.css"]
 
@@ -170,6 +179,7 @@ app.layout = html.Div(
                                 ),
                             ]
                         ),
+                        html.Li([html.A("Prediction", href="/data/prediction")]),
                         html.Li([html.A("Contributors", href="/data/credits")]),
                     ]
                 )
@@ -183,7 +193,7 @@ app.layout = html.Div(
         html.P(
             [
                 u"\u00A9"
-                " Copyright 2020, Trackcorona.online | Data Sources: WHO and JHU"
+                " Copyright 2020, Trackcorona.online | Data Sources: WHO and JHU and MOHFW(India)"
             ],
             style={"textAlign": "center"},
             className="twelve columns",
@@ -240,6 +250,8 @@ def display_page(pathname):
         return liveindiamap.layout
     elif pathname == "/data/credits":
         return credits.layout
+    elif pathname == "/data/prediction":
+        return prediction.layout
     else:
         return home.layout
 
@@ -304,6 +316,19 @@ def latest():
     with open(data_url) as f:
         d = json.load(f)
     return d["latest"]
+
+
+@server.route("/prediction")
+def prediction_html():
+    return flask.render_template('prediction.html')
+
+
+@server.route("/sitemap.xml")
+def sitemap():
+    template = flask.render_template('sitemap.xml')
+    response = flask.make_response(template)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 
 if __name__ == "__main__":

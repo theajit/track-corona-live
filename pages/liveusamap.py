@@ -67,14 +67,11 @@ us_state_abbrev = {
     "Wyoming": "WY",
 }
 
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?gid=1902046093&single=true&widget=true&headers=false"
+usa_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?gid=1902046093&single=true&widget=true&headers=false"
 
-df_list = pd.read_html(url)[0]
+df_list = pd.read_html(usa_url)[0]
 
 df = pd.DataFrame(df_list)
-
-# df = df.drop(columns=["Unnamed: 0","Unnamed: 7","Unnamed: 8"])
-# df = df.drop(columns=["Unnamed: 0","Unnamed: 7"])
 df = df.drop(
     columns=[
         "Unnamed: 0",
@@ -84,12 +81,17 @@ df = df.drop(
         "Unnamed: 11",
         "Unnamed: 12",
         "Unnamed: 13",
+        # "Unnamed: 14",
+        # "Unnamed: 15",
+        # "Unnamed: 16",
+        # "Unnamed: 17",
+        # "Unnamed: 18",
+        # "Unnamed: 19",
+        # "Unnamed: 20"
     ]
 )
-# df_states.columns = ['United States', 'Confirmed','New Confirmed','Deaths', 'New Deaths','Serious & Critical','Recovered']
 
 df_states = df.loc[5:, :]
-# df_states.columns = ['United States', 'Confirmed', 'Deaths','Serious','Critical','Recovered']
 df_states.columns = [
     "United_States",
     "Confirmed",
@@ -99,21 +101,14 @@ df_states.columns = [
     "Serious & Critical",
     "Recovered",
 ]
-
-
-# df_states = df.loc[5:, :]
-# df_states.columns = ['United_States', 'Confirmed', 'Deaths','Serious','Critical','Recovered']
 df_states = df_states[:-3]
 
 df_states["iso_alpha"] = df_states["United_States"].apply(
     lambda x: coco.convert(names=x, src="regex", to="ISO2", not_found=None)
 )
-# df_states['iso_alpha'] = df_states['United States'].apply(lambda x: pc.countries.search_fuzzy(x))
 
 labels = df_states["United_States"].unique()
-# labels_dict = dict(zip(us_state_abbrev,us_state_abbrev.items()))
 df_states = df_states.replace({"iso_alpha": us_state_abbrev})
-
 
 df_states = df_states.replace(to_replace=np.nan, value=0)
 

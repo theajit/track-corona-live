@@ -1,38 +1,32 @@
 import json
 from urllib.request import urlopen
-
-# from bs4 import BeautifulSoup
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 import plotly.graph_objs as go
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 from app import app
+from .functions import indiadata
 
 token = open("/var/www/coronaApp/liveapp/pages/.mapbox_token").read()
 
-
-def return_df(url, pos):
-    # Create a handle, page, to handle the contents of the website
-    df_list = pd.read_html(url)[pos]
-    dfs = pd.DataFrame(df_list, dtype=str)
-    return dfs
+india_url = "https://www.mohfw.gov.in/"
+india_pos = 0
+india_strip = 2
 
 
-url = "https://www.mohfw.gov.in/"
-df_india = return_df(url, 0)
+def india_map_sensor():
+    print("India Map Page Data Updated!")
+    return indiadata.return_india_map_df(india_url, india_pos, india_strip)
 
-df_india.columns = ["S. No.", "State", "Confirmed", "Recovered", "Deaths"]
 
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(india_map_sensor, "interval", minutes=298)
+sched.start()
 
-df_india = df_india[:-1]
-
-df_india["Confirmed"] = df_india["Confirmed"].astype(float)
-df_india["Recovered"] = df_india["Recovered"].astype(float)
-df_india["Deaths"] = df_india["Deaths"].astype(float)
-
-df_india = df_india.set_index("S. No.", inplace=False)
+df_india = india_map_sensor()
 
 with urlopen(
     "https://raw.githubusercontent.com/theajit/track-corona-live/master/assets/india.json"

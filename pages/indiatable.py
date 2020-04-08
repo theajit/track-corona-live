@@ -1,27 +1,27 @@
-import pandas as pd
-
-# from bs4 import BeautifulSoup
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from app import app
+from .functions import indiadata
+
+india_url = "https://www.mohfw.gov.in/"
+india_pos = 0
+india_strip = 1
 
 
-def return_df(url):
-    url = url
-    # Create a handle, page, to handle the contents of the website
-    df_list = pd.read_html(url)[0]
-    dfs = pd.DataFrame(df_list)
-    return dfs
+def india_sensor():
+    print("India Data Updated!")
+    return indiadata.return_india_table_df(india_url, india_pos, india_strip)
 
 
-df_india = return_df("https://www.mohfw.gov.in/")
-# print (df_india)
-df_india = df_india.drop(columns=["S. No."])
-df_india = df_india[:]
-df_india.columns = ["State/UT", "Confirmed", "Recovered", "Deaths"]
+df_india = india_sensor()
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(india_sensor, "interval", minutes=300)
+sched.start()
 
 layout = html.Div(
     [

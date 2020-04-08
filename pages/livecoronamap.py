@@ -1,51 +1,26 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 import plotly.graph_objects as go
-import country_converter as coco
-import numpy as np
-
+from apscheduler.schedulers.background import BackgroundScheduler
 from app import app
+from .functions import worlddata
+
+url_world = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
+world_start = 7
+world_strip = 2
 
 
-url = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
-
-df_list = pd.read_html(url)[0]
-
-df = pd.DataFrame(df_list)
-
-df_final = df.drop(
-    columns=[
-        "Unnamed: 0",
-        "Unnamed: 3",
-        "Unnamed: 5",
-        "Unnamed: 6",
-        "Unnamed: 9",
-        "Unnamed: 10",
-        "Unnamed: 11",
-        "Unnamed: 12",
-        "Unnamed: 13",
-        "Unnamed: 14",
-        "Unnamed: 15",
-        "Unnamed: 16",
-    ]
-)
-df_final.columns = ["Country", "Confirmed", "Deaths", "Serious & Critical", "Recovered"]
-# df_total = df_final.loc[3:4, :]
-df_country = df_final.set_index("Country", inplace=False)
-df_country = df_final.loc[7:, :]
+def world_map_sensor():
+    print("World Map Page Data Updated!")
+    return worlddata.return_world_map_df(url_world, world_start, world_strip)
 
 
-df_country["iso_alpha"] = df_country["Country"].apply(
-    lambda x: coco.convert(names=x, src="regex", to="ISO3", not_found=None)
-)
+world_sched = BackgroundScheduler(daemon=True)
+world_sched.add_job(world_map_sensor, "interval", minutes=310)
+world_sched.start()
 
-df_country = df_country[:-2]
-
-df_country = df_country.replace(to_replace=np.nan, value=0)
-
-# print (df_country)
+df_country = world_map_sensor()
 
 layout = html.Div(
     [

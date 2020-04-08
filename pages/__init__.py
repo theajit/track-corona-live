@@ -5,4 +5,4 @@ __all_ = ["home", "livecoronamap", "livecoronatable", "countrycasesgrowth",
           "indiatable",
           "liveindiamap",
           "liveusamap",
-          "liveusatable"]
+          "liveusatable", "prediction"]
