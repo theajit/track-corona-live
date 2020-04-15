@@ -39,13 +39,17 @@ external_scripts = [
     "https://codepen.io/theajit/pen/JjdLvZE.js",
 ]
 
-app.title = "Track Corona Online Live | India | USA | China"
+app.title = "Track Corona India | USA | China | Online Live "
 
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
-        html.Title("Live Corona Track Online"),
-        html.Br(),
+        html.Title("Track Corona India"),
+        html.Img(src=app.get_asset_url("track_corona_online_logo.png"), title="Track Corona Logo", style={
+            "height": "80px",
+            "textAlign": "center",
+            "display": "inline-block",
+        }),
         html.Div(
             [
                 html.Ul(

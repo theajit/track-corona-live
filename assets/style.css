@@ -481,7 +481,10 @@
   
   .iframe{ border: none; }
   
-  .gs-header{ margin-bottom:30px;color: white !important; -webkit-print-color-adjust: exact; }
+  .gs-header{ margin-bottom: 40px;
+    margin-left: 90px;
+    margin-top: -55px;
+    color: white !important; -webkit-print-color-adjust: exact; }
   
   .gs-text-header{ background: #C41230 !important; -webkit-print-color-adjust: exact; }
   
@@ -772,7 +775,7 @@
       float: none;
       width: 100%;
   }
-  .submenu a:hover,.dropdownmenu a:active {
+  .submenu a:hover,.dropdownmenu ul:active {
       background: #DF4B05 !important;
   }
   .submenu a {
