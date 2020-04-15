@@ -14,16 +14,16 @@ token = open("/var/www/coronaApp/liveapp/pages/.mapbox_token").read()
 
 india_url = "https://www.mohfw.gov.in/"
 india_pos = 0
-india_strip = 2
+india_strip = 3
 
 
 def india_map_sensor():
-    print("India Map Page Data Updated!")
+    print("India Map Page Sensor Working!")
     return indiadata.return_india_map_df(india_url, india_pos, india_strip)
 
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(india_map_sensor, "interval", minutes=298)
+sched.add_job(india_map_sensor, "interval", minutes=92)
 sched.start()
 
 df_india = india_map_sensor()

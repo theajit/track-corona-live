@@ -169,6 +169,18 @@
         footer h3 {
             margin: 0;
         }
+
+        .box {
+            width: 100%;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: #a54;
+            border: 1px solid;
+            margin: 25px;
+        }
     </style>
 
     <title>COVID-19 Analysis (India)</title>
@@ -223,10 +235,10 @@
         var rawdataurl = "https://api.covid19india.org/raw_data.json";
         var dailydataurl = "https://api.covid19india.org/states_daily.json";
 
-        var td = new Date();
-        var today = dateFormat(td);
+        var now = new Date();
+        var today = dateFormat(now);
         var yd = new Date();
-        yd.setDate(td.getDate() - 1);
+        yd.setDate(now.getDate() - 1);
         var yday = dateFormat(yd);
 
         var population = {
@@ -262,7 +274,7 @@
             "Jammu and Kashmir": 12267032,
             "Puducherry": 1247953,
             "Chandigarh": 1055450,
-            "Dadra and Nagar Haveli and Daman and Diu": 585764,
+            "Dadra and Nagar Haveli": 585764,
             "Andaman and Nicobar Islands": 380581,
             "Ladakh": 274000,
             "Lakshadweep": 64473,
@@ -309,6 +321,44 @@
             "ml": "Meghalaya",
             "nl": "Nagaland",
             "sk": "Sikkim"
+        };
+
+        var coeff = {
+            "Kerala": [400.872732, 0.182],
+            "Delhi": [3021.82938, 0.235],
+            "Telangana": [770.080828, 0.209],
+            "Rajasthan": [2879.034354, 0.195],
+            "Haryana": [63378.655, 0.065],
+            "Uttar Pradesh": [1198.874046, 0.158],
+            "Ladakh": [15.07, 0.197],
+            "Tamil Nadu": [1298.64654, 0.323],
+            "Jammu and Kashmir": [502.948312, 0.172],
+            "Karnataka": [305.476485, 0.168],
+            "Maharashtra": [12585.925296, 0.164],
+            "Punjab": [471.636746, 0.133],
+            "Andhra Pradesh": [446.193927, 0.438],
+            "Uttarakhand": [50.43146, 0.155],
+            "Odisha": [83.948436, 0.239],
+            "Puducherry": [8.735671, 0.16],
+            "West Bengal": [365.10446, 0.168],
+            "Chandigarh": [22.16445, 0.158],
+            "Chhattisgarh": [63837.449802, 0.121],
+            "Gujarat": [150797.03154, 0.14],
+            "Himachal Pradesh": [48.052214, 0.167],
+            "Madhya Pradesh": [1162.028944, 0.23],
+            "Bihar": [104.099452, 0.201],
+            "Manipur": [2.57039, 0.001],
+            "Mizoram": [1.097206, 0.001],
+            "Goa": [7.292725, 0.222],
+            "Andaman and Nicobar Islands": [11.036849, 0.291],
+            "Jharkhand": [32.988134, 0.398],
+            "Assam": [31.205576, 0.313],
+            "Arunachal Pradesh": [1.383727, 0.001],
+            "Dadra and Nagar Haveli": [1.171528, 0.001],
+            "Tripura": [3.673917, 0.001],
+            "Nagaland": [1.978502, 0.001],
+            "Meghalaya": [2.966889, 0.001],
+            "country": [21790.252314, 0.176],
         };
 
         // DATA PROCESSING/QUERY UTILS
@@ -362,11 +412,10 @@
         }
 
         function getDates() {
-            var now = new Date();
             var cur = new Date('Jan 30 2020');
             var arr = [];
             while (cur < now) {
-                arr.push(twodig(cur.getDate()) + "/" + twodig(cur.getMonth() + 1) + "/" + cur.getFullYear());
+                arr.push(dateFormat(cur));
                 cur.setDate(cur.getDate() + 1);
             }
             return arr;
@@ -377,7 +426,7 @@
             var arr = [];
             var i = 0;
             while (i < 366) {
-                arr.push(twodig(cur.getDate()) + "/" + twodig(cur.getMonth() + 1) + "/" + cur.getFullYear());
+                arr.push(dateFormat(cur));
                 cur.setDate(cur.getDate() + 1);
                 i++;
             }
@@ -581,7 +630,6 @@
 
             oneYear.forEach(function (date) {
                 prediction[date].country.value = states.reduce(function (acc, state) {
-                    //console.log(prediction[date][state]);
                     return acc + (prediction[date][state].value || 0);
                 }, 0);
             });
@@ -590,12 +638,13 @@
         }
 
         function curveFit(data, state) {
-            var eps = 0.01;
-
             var dates = Object.keys(data);
             var d0 = dates.indexOf('14/03/2020');
-            var currentTotal = data[today][state].total;
-            var p0limit = currentTotal > 100 ? 30 : currentTotal > 10 ? 5 : 2;
+            var currentTotal = data[yday][state].total;
+            var p0limit = currentTotal > 1000 ? 100 : currentTotal > 200 ? 20 : 5;
+            //currentTotal > 100 ? 5 : 2;
+
+            var relative = currentTotal > 20;
 
             for (var i = 0; i < dates.length; i++) {
                 if (data[dates[i]][state].total > p0limit) {
@@ -611,8 +660,13 @@
                 };
             });
 
-            var P0 = dset[0].y;
+            if (!dset.length) {
+                return function (date) {
+                    return 0;
+                };
+            }
 
+            var P0 = dset[0].y;
             var A = function A(x) {
                 return (x - P0) / P0;
             };
@@ -620,94 +674,23 @@
                 return K / (1 + A(K) * Math.exp(-k * t));
             };
 
-            var err = function err(K, k) {
-                return dset.reduce(function (acc, _ref2) {
-                    var x = _ref2.x,
-                        y = _ref2.y;
-                    return acc + Math.pow((y - f(K, k, x)) / y, 2);
-                }, 0) / dset.length;
-            };
-
-            var dedK = function dedK(K, k) {
-                return -2 * dset.reduce(function (acc, _ref3) {
-                    var x = _ref3.x,
-                        y = _ref3.y;
-                    return acc + (y - f(K, k, x)) * (P0 + K) * (1 - Math.exp(-k * x)) * P0 * Math.pow(y, -2) / (Math.pow(P0, 2) + Math.exp(-2 * k * x) * Math.pow(K - P0, 2) - 2 * P0 * Math.exp(-k * x) * (K - P0));
-                }, 0);
-            };
-
-            var dedk = function dedk(K, k) {
-                return -2 * dset.reduce(function (acc, _ref4) {
-                    var x = _ref4.x,
-                        y = _ref4.y;
-                    return acc + (y - f(K, k, x)) * K * A(K) * x * Math.exp(-k * x) * Math.pow(y, -2) / Math.pow(1 + A(K) * Math.exp(-k * x), 2);
-                }, 0);
-            };
-
-            var minminee = Infinity,
-                minminK = void 0,
-                minmink = void 0,
-                iii = void 0;
-            for (var pctg = 0.002; pctg <= 0.1; pctg += 0.002) {
-                var K = Math.floor(population[state] * pctg / 100);
-                var Kmax = K; // assuming 0.2% of population stand a chance to be affected and report
-                var k = 0.15;
-
-                var ee = err(K, k);
-                var _i = 0,
-                    ii = void 0;
-
-                var minee = Infinity;
-                var minK = void 0,
-                    mink = void 0;
-                if (ee < minee) {
-                    minee = ee;
-                    minK = K;
-                    mink = k;
-                }
-
-                var prevee = ee;
-                while (ee > eps && _i < 200) {
-                    var _K = K,
-                        _k = k;
-                    K = Math.min(Kmax, _K - ee / dedK(_K, _k));
-                    if (K < 0) K = _K;
-                    k = _k - ee / dedk(_K, _k);
-                    ee = err(K, k);
-                    _i++;
-                    if (ee < minee) {
-                        minee = ee;
-                        minK = K;
-                        mink = k;
-                        ii = _i;
-                    }
-                    //if (ee > prevee) break;
-                }
-                //console.log({ state, ee, minee, i, eps, mink, minK, Kmax});
-                if (minee < minminee) {
-                    minminee = minee;
-                    minminK = minK;
-                    minmink = mink;
-                    iii = ii;
-                }
-            }
-
-            //console.log({ state, minminee, iii });
-
+            //console.log(coeff[state].K, coeff[state].k, state);
+            //console.log(f(coeff[state].K, coeff[state].k, 15))
             return function (date) {
                 var x = oneYear.indexOf(date) - d0;
-                return Math.floor(f(minminK, minmink, x));
+                var res = Math.floor(f(coeff[state][0], coeff[state][1], x));
+                return res;
             };
         }
 
         // COMPONENTS
 
-        function Chart(_ref5) {
-            var data = _ref5.data,
-                state = _ref5.state,
-                k = _ref5.k,
-                semilog = _ref5.semilog,
-                area = _ref5.area;
+        function Chart(_ref2) {
+            var data = _ref2.data,
+                state = _ref2.state,
+                k = _ref2.k,
+                semilog = _ref2.semilog,
+                area = _ref2.area;
 
             var predKey = "predicted" + capitalize(k);
             var d = Object.keys(data).map(function (date, ind) {
@@ -744,8 +727,8 @@
                     { width: 800, height: k === 'value' ? 300 : 400, data: d, syncId: "aa" },
                     k !== 'factor' && k !== 'value' && React.createElement(Area, { type: "monotone", dataKey: "prediction", stroke: "#f82", fill: "#f828", strokeWidth: 1 }),
                     area ? React.createElement(Area, { type: "monotone", dataKey: "value", stroke: "#f82", fill: "#f828", strokeWidth: 1 }) : React.createElement(Line, { type: "monotone", dataKey: "value", stroke: "#8884d8", strokeWidth: 2 }),
-                    k === 'total' && React.createElement(Area, { type: "monotone", dataKey: "recovered", stroke: "#8c0", fill: "#8c08", strokeWidth: 1 }),
-                    k === 'total' && React.createElement(Area, { type: "monotone", dataKey: "deceased", stroke: "#888", fill: "#8888", strokeWidth: 1 }),
+                    k === 'total' && React.createElement(Area, { type: "monotone", dataKey: "deceased", stroke: "#888", fill: "#8888", strokeWidth: 1, stackId: 1 }),
+                    k === 'total' && React.createElement(Area, { type: "monotone", dataKey: "recovered", stroke: "#8c0", fill: "#8c08", strokeWidth: 1, stackId: 1 }),
                     React.createElement(CartesianGrid, { stroke: "#ccc", strokeDasharray: "5 5" }),
                     React.createElement(XAxis, { dataKey: "x" }),
                     React.createElement(YAxis, { scale: semilog && 'log', domain: semilog && ['auto', 'auto'] }),
@@ -757,9 +740,9 @@
             );
         }
 
-        function Heading(_ref6) {
-            var state = _ref6.state,
-                data = _ref6.data;
+        function Heading(_ref3) {
+            var state = _ref3.state,
+                data = _ref3.data;
 
             return React.createElement(
                 "div",
@@ -882,6 +865,7 @@
             if (!data) {
                 return React.createElement(Loading, null);
             }
+
             return React.createElement(
                 "div",
                 { className: "container" },
@@ -931,7 +915,15 @@
                         ),
                         React.createElement(Heading, { data: data, state: st }),
                         React.createElement(Chart, { data: data, state: st, k: 'total' }),
-                        React.createElement(Chart, { data: pred, state: st, k: 'value', area: true }),
+                        data[today][st].total < 20 ? React.createElement(
+                            "div",
+                            { className: "box" },
+                            React.createElement(
+                                "h2",
+                                null,
+                                "Not enough data available for prediction"
+                            )
+                        ) : React.createElement(Chart, { data: pred, state: st, k: 'value', area: true }),
                         React.createElement(Chart, { data: data, state: st, k: 'new' }),
                         React.createElement(Chart, { data: data, state: st, k: 'diff' }),
                         React.createElement(Chart, { data: data, state: st, k: 'factor', semilog: true })

@@ -9,18 +9,18 @@ from .functions import indiadata
 
 india_url = "https://www.mohfw.gov.in/"
 india_pos = 0
-india_strip = 1
+india_strip = 2
 
 
 def india_sensor():
-    print("India Data Updated!")
+    print("India Table Page Sensor Working!")
     return indiadata.return_india_table_df(india_url, india_pos, india_strip)
 
 
 df_india = india_sensor()
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(india_sensor, "interval", minutes=300)
+sched.add_job(india_sensor, "interval", minutes=90)
 sched.start()
 
 layout = html.Div(

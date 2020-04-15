@@ -18,6 +18,7 @@ def return_india_table_df(url, pos, strip):
     df_india["Deaths"] = df_india["Deaths"].astype(int)
     df_india["Recovered"] = df_india["Recovered"].astype(int)
 
+    print("India Table Data Updated!")
     return df_india
 
 
@@ -33,6 +34,7 @@ def return_india_map_df(url, pos, strip):
     df_india["Deaths"] = df_india["Deaths"].astype(float)
 
     df_india = df_india.set_index("S. No.", inplace=False)
+    print("India Map Data Updated!")
 
     return df_india
 
@@ -44,5 +46,6 @@ def return_india_total_df(url, pos, endrow):
     df_india.columns = ["S. No.", "State", "Confirmed", "Recovered", "Deaths"]
     df_india_total = df_india.iloc[[-endrow]]
     df_india_total["Confirmed"] = df_india_total["Confirmed"].str.rstrip('*')
+    print("India Total Updated!")
 
     return df_india_total

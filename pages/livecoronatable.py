@@ -14,12 +14,12 @@ world_strip = 1
 
 
 def world_table_sensor():
-    print("World Table Page Data Updated!")
+    print("World Table Page Sensor Working!")
     return worlddata.return_world_table_df(url_world, world_start, world_strip)
 
 
 world_sched = BackgroundScheduler(daemon=True)
-world_sched.add_job(world_table_sensor, "interval", minutes=312)
+world_sched.add_job(world_table_sensor, "interval", minutes=55)
 world_sched.start()
 
 df_country = world_table_sensor()

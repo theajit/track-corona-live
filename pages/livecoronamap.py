@@ -12,12 +12,12 @@ world_strip = 2
 
 
 def world_map_sensor():
-    print("World Map Page Data Updated!")
+    print("World Map Page Sensor Working!")
     return worlddata.return_world_map_df(url_world, world_start, world_strip)
 
 
 world_sched = BackgroundScheduler(daemon=True)
-world_sched.add_job(world_map_sensor, "interval", minutes=310)
+world_sched.add_job(world_map_sensor, "interval", minutes=50)
 world_sched.start()
 
 df_country = world_map_sensor()

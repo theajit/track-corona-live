@@ -19,18 +19,18 @@ world_endrow = 2
 
 
 def world_map_sensor():
-    print("World Home Page Map Data Updated!")
+    print("World Home Page Map Sensor Working!")
     return worlddata.return_world_map_df(url_world, world_start, world_strip)
 
 
 def world_total_sensor():
-    print("World Home Page Total Number Updated!")
+    print("World Home Page Total Sensor Working!")
     return worlddata.return_world_total_df(url_world, world_endrow)
 
 
 world_sched = BackgroundScheduler(daemon=True)
-world_sched.add_job(world_map_sensor, "interval", minutes=305)
-world_sched.add_job(world_total_sensor, "interval", minutes=306)
+world_sched.add_job(world_map_sensor, "interval", minutes=60)
+world_sched.add_job(world_total_sensor, "interval", minutes=65)
 world_sched.start()
 
 df_country = world_map_sensor()
@@ -119,17 +119,17 @@ world_fig = go.Figure(data=[world_trace], layout=world_layout)
 # India Confirmed Map and Total on Home Page
 india_url = "https://mohfw.gov.in"
 india_pos = 0
-india_strip = 2
-india_endrow = 2
+india_strip = 3
+india_endrow = 3
 
 
 def india_map_sensor():
-    print("India Home Page Map Data Updated!")
+    print("India Home Page Map Sensor Working!")
     return indiadata.return_india_map_df(india_url, india_pos, india_strip)
 
 
 def india_total_sensor():
-    print("India Home Page Total Number Updated!")
+    print("India Home Page Total Sensor Working!")
     return indiadata.return_india_total_df(
         india_url,
         india_pos,
@@ -139,8 +139,8 @@ def india_total_sensor():
 df_india = india_map_sensor()
 
 india_sched = BackgroundScheduler(daemon=True)
-india_sched.add_job(india_map_sensor, "interval", minutes=295)
-india_sched.add_job(india_total_sensor, "interval", minutes=290)
+india_sched.add_job(india_map_sensor, "interval", minutes=90)
+india_sched.add_job(india_total_sensor, "interval", minutes=95)
 india_sched.start()
 
 

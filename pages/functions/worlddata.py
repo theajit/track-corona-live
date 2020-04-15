@@ -39,6 +39,7 @@ def return_world_table_df(url, start, strip):
     df_country["Serious & Critical"] = df_country["Serious & Critical"].astype(
         float)
     df_country["Recovered"] = df_country["Recovered"].astype(int)
+    print("World Table Data Updated!")
 
     return df_country
 
@@ -77,6 +78,7 @@ def return_world_map_df(url, start, strip):
     )
     df_country = df_country[:-strip]
     df_country = df_country.replace(to_replace=np.nan, value=0)
+    print("World Map Data Updated!")
 
     return df_country
 
@@ -112,5 +114,6 @@ def return_world_total_df(url, endrow):
     # df_total = df_total.replace(np.nan, value =0)
     df_total = df_total.replace("-", 0, regex=True)
     df_total = df_total.fillna(0)
+    print("World Total Updated!")
 
     return df_total
