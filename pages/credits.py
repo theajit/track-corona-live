@@ -26,6 +26,12 @@ layout = html.Div(
                     className="custom-tab",
                     selected_className="custom-tab--selected",
                 ),
+                dcc.Tab(
+                    label="Neila Sreenivas",
+                    value="neila",
+                    className="custom-tab",
+                    selected_className="custom-tab--selected",
+                ),
             ],
         ),
         html.Div(id="tabs-content-classes"),
@@ -60,8 +66,8 @@ def render_content(tab):
                         html.Li(
                             [
                                 html.A(
-                                    "Twitter ",
-                                    href="https://twitter.com/cocktails_guy",
+                                    "Github ",
+                                    href="https://github.com/theajit/",
                                     target="_blank",
                                 )
                             ]
@@ -71,6 +77,15 @@ def render_content(tab):
                                 html.A(
                                     "LinkedIn ",
                                     href="https://www.linkedin.com/in/ajitsatpathy/",
+                                    target="_blank",
+                                )
+                            ]
+                        ),
+                        html.Li(
+                            [
+                                html.A(
+                                    "Twitter ",
+                                    href="https://twitter.com/cocktails_guy",
                                     target="_blank",
                                 )
                             ]
@@ -104,6 +119,33 @@ def render_content(tab):
                         html.A(
                             "LinkedIn profile ",
                             href="https://www.linkedin.com/in/sunit-behera-65a451136/",
+                            target="_blank",
+                        ),
+                    ]
+                ),
+                html.Br(),
+            ]
+        )
+    elif tab == "neila":
+        return html.Div(
+            [
+                html.Br(),
+                html.P(
+                    [
+                        "Post Graduate in Fashion Design and Clothing Technology. She is into apparel and graphic design."
+                    ]
+                ),
+                html.P(
+                    [
+                        "Her skills include Adobe Illustrator, Photoshop and Corel Draw."
+                    ]
+                ),
+                html.P(
+                    [
+                        ("You can contact her on "),
+                        html.A(
+                            "neilasree@yahoo.com ",
+                            href="mailto:neilasree@yahoo.com",
                             target="_blank",
                         ),
                     ]
