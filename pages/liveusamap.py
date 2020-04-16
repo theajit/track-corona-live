@@ -3,10 +3,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objects as go
-import country_converter as coco
+# import country_converter as coco
 import numpy as np
+import json
+from urllib.request import urlopen
 
 from app import app
+
+token = open("/var/www/coronaApp/liveapp/pages/.mapbox_token").read()
 
 us_state_abbrev = {
     "American Samoa": "AS",
@@ -103,15 +107,22 @@ df_states.columns = [
 ]
 df_states = df_states[:-3]
 
-df_states["iso_alpha"] = df_states["United_States"].apply(
+df_states["iso_alpha"] = df_states["United_States"]
+"""
+.apply(
     lambda x: coco.convert(names=x, src="regex", to="ISO2", not_found=None)
-)
+) """
 
 labels = df_states["United_States"].unique()
 df_states = df_states.replace({"iso_alpha": us_state_abbrev})
 
 df_states = df_states.replace(to_replace=np.nan, value=0)
 
+
+with urlopen(
+    "https://raw.githubusercontent.com/theajit/track-corona-online/master/assets/united_states.json"
+) as response:
+    united_states = json.load(response)
 
 layout = html.Div(
     [
@@ -195,35 +206,23 @@ def update_figure(selected):
         else:
             return "Recovered"
 
-    trace = go.Choropleth(
-        locations=dff["iso_alpha"],
+    trace = go.Choroplethmapbox(
+        geojson=united_states,
+        featureidkey="properties.NAME",
+        locations=dff["United_States"],
         z=dff[selected],
         text=dff["United_States"],
         autocolorscale=False,
-        locationmode="USA-states",
         colorscale=colormap,
-        marker={"line": {"color": "rgb(180,180,180)", "width": 1.5}},
-        colorbar={
-            "thickness": 10,
-            "len": 0.3,
-            "x": 0.9,
-            "y": 0.7,
-            "title": {"text": title(selected), "side": "bottom"},
-            "titleside": "top",
-            "ticks": "outside",
-        },
     )
     return {
         "data": [trace],
         "layout": go.Layout(
             title=title(selected),
-            height=800,
-            geo={
-                "scope": "usa",
-                "showframe": False,
-                "showcoastlines": True,
-                "coastlinecolor": "RebeccaPurple",
-                "projection": {"type": "albers usa"},
-            },
+            mapbox_style="mapbox://styles/cocktailsguy/ck935sfgw2jrp1ip9nq0sza2r",
+            mapbox_accesstoken=token,
+            mapbox_zoom=1.5,
+            mapbox_center={"lat": -90, "lon": 41.5},
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
         ),
     }

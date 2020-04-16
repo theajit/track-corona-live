@@ -482,7 +482,7 @@
   .iframe{ border: none; }
   
   .gs-header{ margin-bottom: 40px;
-    margin-left: 90px;
+    margin-left: 120px;
     margin-top: -55px;
     color: white !important; -webkit-print-color-adjust: exact; }
   
@@ -745,7 +745,7 @@
       color: #FFFFFF;
       display: block;
       font: bold 12px/20px sans-serif;
-      padding: 10px 25px;
+      padding: 10px 10px;
       text-align: center;
       text-decoration: none;
       -webkit-transition: all .25s ease;
@@ -753,7 +753,7 @@
       -ms-transition: all .25s ease;
       -o-transition: all .25s ease;
       transition: all .25s ease;
-    width:200px;
+      width: 170px;;
   }
   .dropdownmenu li:hover a {
       background: #243447;

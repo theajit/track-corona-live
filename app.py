@@ -31,6 +31,7 @@ from pages import (
     prediction,
 )
 from refresh import update
+from pages.functions import indiadata, worlddata
 
 external_stylesheets = ["https://codepen.io/theajit/pen/vYYxVLb.css"]
 
@@ -49,6 +50,8 @@ app.layout = html.Div(
             "height": "80px",
             "textAlign": "center",
             "display": "inline-block",
+            "margin-left": "1.5%",
+            "margin-top": "0.5%"
         }),
         html.Div(
             [
@@ -184,6 +187,7 @@ app.layout = html.Div(
                             ]
                         ),
                         html.Li([html.A("Prediction", href="/data/prediction")]),
+                        html.Li([html.A("About Corona", href="/about-corona")]),
                         html.Li([html.A("Contributors", href="/data/credits")]),
                     ]
                 )
@@ -333,6 +337,52 @@ def sitemap():
     response = flask.make_response(template)
     response.headers['Content-Type'] = 'application/xml'
     return response
+
+
+@server.route("/about-corona")
+def about_html():
+    url_world = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
+    world_endrow = 2
+    df_total = worlddata.return_world_total_df(url_world, world_endrow)
+    df_total["Confirmed"] = df_total["Confirmed"].astype(int)
+    df_total["Deaths"] = df_total["Deaths"].astype(int)
+    df_total["Serious & Critical"] = df_total["Serious & Critical"].astype(int)
+    df_total["Recovered"] = df_total["Recovered"].astype(int)
+
+    confirmed = df_total["Confirmed"].values[0]
+    deaths = df_total["Deaths"].values[0]
+    serious = df_total["Serious & Critical"].values[0]
+    recovered = df_total["Recovered"].values[0]
+
+    world_confirmed = ("{:,}".format(confirmed))
+    world_deaths = ("{:,}".format(deaths))
+    world_serious = ("{:,}".format(serious))
+    world_recovered = ("{:,}".format(recovered))
+    return flask.render_template('aboutcorona.html', world_confirm=world_confirmed, world_death=world_deaths, world_serious=world_serious, world_recovered=world_recovered)
+
+
+@server.route("/india-table")
+def india_html():
+    india_url = "https://www.mohfw.gov.in/"
+    india_pos = 0
+    india_strip = 3
+    india_endrow = 3
+    df_india_table = indiadata.return_india_table_df(india_url, india_pos, india_strip)
+    df_india_total = indiadata.return_india_total_df(india_url, india_pos, india_endrow)
+
+    df_india_total["Confirmed"] = df_india_total["Confirmed"].astype(int)
+    df_india_total["Deaths"] = df_india_total["Deaths"].astype(int)
+    df_india_total["Recovered"] = df_india_total["Recovered"].astype(int)
+
+    india_confirmed = df_india_total["Confirmed"].values[0]
+    india_deaths = df_india_total["Deaths"].values[0]
+    india_recovered = df_india_total["Recovered"].values[0]
+
+    india_confirmed = ("{:,}".format(india_confirmed))
+    india_deaths = ("{:,}".format(india_deaths))
+    india_recovered = ("{:,}".format(india_recovered))
+
+    return flask.render_template('indiatable.html', tables=[df_india_table.to_html(classes='ui celled table', table_id='india-table')], titles=df_india_table.columns.values, india_confirm=india_confirmed, india_death=india_deaths, india_recovered=india_recovered)
 
 
 if __name__ == "__main__":
