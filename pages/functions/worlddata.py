@@ -32,12 +32,12 @@ def return_world_table_df(url, start, strip):
 
     df_country = df_country.replace(np.nan, value=0)
 
-    df_country["Confirmed"] = df_country["Confirmed"].astype(float)
-    df_country["New Confirmed"] = df_country["New Confirmed"].astype(float)
-    df_country["Deaths"] = df_country["Deaths"].astype(float)
-    df_country["Deaths"] = df_country["Deaths"].astype(float)
+    df_country["Confirmed"] = df_country["Confirmed"].astype(int)
+    df_country["New Confirmed"] = df_country["New Confirmed"].astype(int)
+    df_country["Deaths"] = df_country["Deaths"].astype(int)
+    df_country["Deaths"] = df_country["Deaths"].astype(int)
     df_country["Serious & Critical"] = df_country["Serious & Critical"].astype(
-        float)
+        int)
     df_country["Recovered"] = df_country["Recovered"].astype(int)
     print("World Table Data Updated!")
 

@@ -100,7 +100,7 @@
                                                 <div class="status-item">
                                                     <h6 class="title">Worldwide Cases</h6>
                                                     <div class="h3 count" style="color: rgb(68, 155, 226)">
-                                                        {{india_confirm}}
+                                                        {{world_confirm}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -108,7 +108,7 @@
                                                 <div class="status-item">
                                                     <h6 class="title">Deaths</h6>
                                                     <div style="color: #F65164" class="h3 count">
-                                                        {{ india_death }}
+                                                        {{ world_death }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,7 +116,7 @@
                                                 <div class="status-item">
                                                     <h6 class="title">Recovered</h6>
                                                     <div style="color:rgb(101, 221, 155)" class="h3 count">
-                                                        {{ india_recovered }}
+                                                        {{ world_recovered }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -170,7 +170,7 @@
 
     <script>
         $(document).ready(function() {
-            var t = $('#india-table').DataTable({
+            var t = $('#world-table').DataTable({
                 "columnDefs": [{
                     "searchable": false,
                     "orderable": false,
