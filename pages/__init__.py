@@ -1,6 +1,6 @@
 __all_ = ["home", "livecoronamap", "livecoronatable", "countrycasesgrowth",
           "countryratechanges",
-          "credits",
+          "credit",
           "indiahelpline",
           "indiatable",
           "liveindiamap",

@@ -19,7 +19,7 @@ app.server.secret_key = str(uuid.uuid4())
 from pages import (
     countrycasesgrowth,
     countryratechanges,
-    credits,
+    credit,
     home,
     indiahelpline,
     indiatable,
@@ -257,7 +257,7 @@ def display_page(pathname):
     elif pathname == "/data/live-india-map":
         return liveindiamap.layout
     elif pathname == "/data/credits":
-        return credits.layout
+        return credit.layout
     elif pathname == "/data/prediction":
         return prediction.layout
     else:

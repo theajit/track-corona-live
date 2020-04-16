@@ -17,7 +17,7 @@
 */
 
 
-/* PLotly.js 
+/* PLotly.js
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 
@@ -284,7 +284,7 @@ blockquote {
     padding-left: 1rem;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    margin-left: 0rem;
+    margin-left: 0;
 }
 
 
@@ -390,23 +390,10 @@ select {
     box-sizing: border-box;
     font-family: inherit;
     font-size: inherit;
-    /*https://stackoverflow.com/questions/6080413/why-doesnt-input-inherit-the-font-from-body*/
-}
-
-
-/* Removes awkward default styles on some inputs for iOS */
-
-input[type="email"],
-input[type="number"],
-input[type="search"],
-input[type="text"],
-input[type="tel"],
-input[type="url"],
-input[type="password"],
-textarea {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    /*https://stackoverflow.com/questions/6080413/why-doesnt-input-inherit-the-font-from-body*/
 }
 
 textarea {
@@ -431,7 +418,7 @@ select:focus {
 label,
 legend {
     display: block;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 fieldset {
@@ -526,14 +513,14 @@ tr:nth-child(even) {
 
 button,
 .button {
-    margin-bottom: 0rem;
+    margin-bottom: 0;
 }
 
 input,
 textarea,
 select,
 fieldset {
-    margin-bottom: 0rem;
+    margin-bottom: 0;
 }
 
 pre,
@@ -541,7 +528,7 @@ dl,
 figure,
 table,
 form {
-    margin-bottom: 0rem;
+    margin-bottom: 0;
 }
 
 p,
@@ -613,27 +600,32 @@ hr {
 
 /* Larger than mobile */
 
-@media (min-width: 400px) {}
+
+/* @media (min-width: 400px) {} */
 
 
 /* Larger than phablet (also point when grid becomes active) */
 
-@media (min-width: 550px) {}
+
+/* @media (min-width: 550px) {} */
 
 
 /* Larger than tablet */
 
-@media (min-width: 750px) {}
+
+/* @media (min-width: 750px) {} */
 
 
 /* Larger than desktop */
 
-@media (min-width: 1000px) {}
+
+/* @media (min-width: 1000px) {} */
 
 
 /* Larger than Desktop HD */
 
-@media (min-width: 1200px) {}
+
+/* @media (min-width: 1200px) {} */
 
 body {
     width: 100%;
@@ -654,7 +646,7 @@ body {
     position: relative;
     width: 210mm;
     min-height: 300mm;
-    padding: 0mm;
+    padding: 0;
     margin: 10mm auto;
     /* border: 1px #D3D3D3 solid; */
     border-radius: 5px;
@@ -747,7 +739,7 @@ table {
 }
 
 td {
-    padding: 2px 0px
+    padding: 2px 0
 }
 
 tr:nth-child(even) {
@@ -853,7 +845,7 @@ a {
       text-align: center;
       text-decoration: none;
       display: inline-block;
-  } 
+  }
   
   .tab {
   border-style: solid;
@@ -1014,7 +1006,7 @@ table td {
     color: #FFFFFF;
     display: block;
     font: bold 12px/20px sans-serif;
-    padding: 10px 10px;
+    padding: 10px;
     text-align: center;
     text-decoration: none;
     -webkit-transition: all .25s ease;
@@ -1023,7 +1015,6 @@ table td {
     -o-transition: all .25s ease;
     transition: all .25s ease;
     width: 170px;
-    ;
 }
 
 .dropdownmenu li:hover a {
