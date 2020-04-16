@@ -78,41 +78,29 @@ world_colormap = [
     [1.0, world_color5],
 ]
 
-world_trace = go.Choropleth(
-    locations=df_country.Country,
-    locationmode='country names',
+with urlopen(
+    "https://raw.githubusercontent.com/theajit/track-corona-online/master/assets/world.json"
+) as response:
+    world = json.load(response)
+
+world_trace = go.Choroplethmapbox(
+    geojson=world,
+    featureidkey="id",
+    locations=df_country.iso_alpha,
     z=df_country["Confirmed"],
-    text=df_country.index,
+    text=df_country["Country"],
     autocolorscale=False,
     colorscale=world_colormap,
-    reversescale=False,
-    marker={"line": {"color": "rgb(180,180,180)", "width": 1.5}},
-    colorbar={
-        "thickness": 10,
-        "len": 0.3,
-        "x": 0.9,
-        "y": 0.7,
-        "title": {"side": "bottom"},
-        "titleside": "top",
-        "ticks": "outside",
-    },
 )
 
 world_layout = go.Layout(
-    geo={
-        "showframe": False,
-        "showcoastlines": True,
-        "showlakes": False,
-        "coastlinecolor": "RebeccaPurple",
-        "showland": True,
-        "landcolor": "White",
-        "showocean": True,
-        "oceancolor": "#72e7f3",
-        "showcountries": True,
-        "countrycolor": "RebeccaPurple",
-        "projection": {"type": "miller"},
-    },
+    mapbox_style="mapbox://styles/cocktailsguy/ck93b7muk22f61ipm39pag1oc",
+    mapbox_accesstoken=token,
+    mapbox_zoom=0.2,
+    mapbox_center={"lat": 0, "lon": 0},
+    margin={"r": 0, "t": 0, "l": 0, "b": 0},
 )
+
 world_fig = go.Figure(data=[world_trace], layout=world_layout)
 
 

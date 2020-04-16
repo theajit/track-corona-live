@@ -1,10 +1,14 @@
 import dash
+import json
+from urllib.request import urlopen
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
 from apscheduler.schedulers.background import BackgroundScheduler
 from app import app
 from .functions import worlddata
+
+token = open("/var/www/coronaApp/liveapp/pages/.mapbox_token").read()
 
 url_world = "https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vR30F8lYP3jG7YOq8es0PBpJIE5yvRVZffOyaqC0GgMBN6yt0Q-NI8pxS7hd1F9dYXnowSC6zpZmW9D/pubhtml/sheet?headers=false&gid=0"
 world_start = 7
@@ -60,6 +64,11 @@ layout = html.Div(
     className="container",
 )
 
+with urlopen(
+    "https://raw.githubusercontent.com/theajit/track-corona-online/master/assets/world.json"
+) as response:
+    world = json.load(response)
+
 color1 = "#d2e3fc"
 color2 = "#8ab4f8"
 color3 = "#4285f4"
@@ -105,39 +114,23 @@ def update_figure(selected):
         else:
             return "Recovered"
 
-    trace = go.Choropleth(
-        locations=dff["iso_alpha"],
+    trace = go.Choroplethmapbox(
+        geojson=world,
+        featureidkey="id",
+        locations=dff.iso_alpha,
         z=dff[selected],
         text=dff["Country"],
         autocolorscale=False,
         colorscale=colormap,
-        marker={"line": {"color": "rgb(180,180,180)", "width": 1.5}},
-        colorbar={
-            "thickness": 10,
-            "len": 0.3,
-            "x": 0.9,
-            "y": 0.7,
-            "title": {"text": title(selected), "side": "bottom"},
-            "titleside": "top",
-            "ticks": "outside",
-        },
     )
     return {
         "data": [trace],
         "layout": go.Layout(
             title=title(selected),
-            height=800,
-            geo={
-                "showframe": False,
-                "showcoastlines": True,
-                "coastlinecolor": "RebeccaPurple",
-                "showland": True,
-                "landcolor": "White",
-                "showocean": True,
-                "oceancolor": "#72e7f3",
-                "showcountries": True,
-                "countrycolor": "RebeccaPurple",
-                "projection": {"type": "miller"},
-            },
+            mapbox_style="mapbox://styles/cocktailsguy/ck93b7muk22f61ipm39pag1oc",
+            mapbox_accesstoken=token,
+            mapbox_zoom=0.2,
+            mapbox_center={"lat": 0, "lon": 0},
+            margin={"r": 0, "t": 0, "l": 0, "b": 0},
         ),
     }
