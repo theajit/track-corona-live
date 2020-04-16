@@ -221,8 +221,8 @@ def update_figure(selected):
             title=title(selected),
             mapbox_style="mapbox://styles/cocktailsguy/ck935sfgw2jrp1ip9nq0sza2r",
             mapbox_accesstoken=token,
-            mapbox_zoom=1.5,
-            mapbox_center={"lat": -90, "lon": 41.5},
+            mapbox_zoom=2.3,
+            mapbox_center={"lat": 39.8097343, "lon": -108},
             margin={"r": 0, "t": 0, "l": 0, "b": 0},
         ),
     }
