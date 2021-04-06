@@ -18,7 +18,7 @@ Flask-Compress==1.4.0
 Flask-Dance==3.0.0
 Flask-SeaSurf==0.2.2
 gunicorn==19.8.1
-lxml==4.2.5
+lxml==4.6.3
 matplotlib==3.1.1
 numpy==1.17.0
 pandas==0.25.0
